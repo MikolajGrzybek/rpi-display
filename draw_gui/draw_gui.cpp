@@ -221,7 +221,7 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Paint_Clear(WHITE);
   
     /* DRAW HERE */
-    Paint_DrawRectangle(start_x + 45, start_y + 45, start_x + Area.Dynamic_Area_Width - 45, start_y + Area.Dynamic_Area_Height - 45, 0x00, DOT_PIXEL_2X2, DRAW_FILL_EMPTY);
+    Paint_DrawRectangle(45, 45, Area.Dynamic_Area_Width - 45, Area.Dynamic_Area_Height - 45, 0x00, DOT_PIXEL_3X3, DRAW_FILL_EMPTY);
     Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);     
 
 
