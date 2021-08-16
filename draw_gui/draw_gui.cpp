@@ -1,4 +1,5 @@
 #include "draw_gui.hpp"
+#include "EPD_IT8951.h"
 #include <sys/types.h>
 
 IT8951_Dev_Info Dev_Info;
@@ -216,7 +217,7 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
 
     Paint_SelectImage(Refresh_Frame_Buf);
     Epd_Mode(epd_mode);
-    Paint_SetBitsPerPixel(BitsPerPixel_8);
+    Paint_SetBitsPerPixel(1);
     Paint_Clear(WHITE);
 
   
@@ -224,7 +225,7 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);     
 
 
-    EPD_IT8951_8bp_Refresh(Refresh_Frame_Buf, Area.Start_X, Area.Start_Y, width, height, false, Init_Target_Memory_Addr);
+    EPD_IT8951_1bp_Refresh(Refresh_Frame_Buf, Area.Start_X, Area.Start_Y, width, height, A2_Mode, Init_Target_Memory_Addr, true);
     
     if(Refresh_Frame_Buf != NULL){
         free(Refresh_Frame_Buf);
