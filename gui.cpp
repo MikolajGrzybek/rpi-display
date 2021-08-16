@@ -51,13 +51,13 @@ void Gui::on_gps_data_received(sbt_RMC_msg msg)
 
 void Gui::on_gps_fix_changed(bool is_fixed)
 {
-    QString txt = "GPS " + (is_fixed? "" : QString("NO ")) + "FIX";
-    //TODO: gotta think about this
-  /*  this->ui->lGpsFix->setText(txt);
-    if (is_fixed)
-        this->ui->signal_icon->setStyleSheet("border-image:url(:gps/fix.png) 2 5 2 5;");
-    else
-        this->ui->signal_icon->setStyleSheet("border-image:url(:gps/no_fix.png) 2 5 2 5;"); */
+    if (is_fixed){
+        Dynamic_Refresh(100, 100, 1150, 300, 1, "null");
+
+    }
+    else{
+        Dynamic_Refresh(100, 100, 1150, 300, 0, "null");
+    }
 }
 
 void Gui::on_can_frame_received(can_frame cf)
