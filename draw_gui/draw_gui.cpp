@@ -1,4 +1,5 @@
 #include "draw_gui.hpp"
+#include "Debug.h"
 #include "EPD_IT8951.h"
 #include <sys/types.h>
 
@@ -219,7 +220,7 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Epd_Mode(epd_mode);
     Paint_SetBitsPerPixel(1);
     Paint_Clear(WHITE);
-
+    Debug("eeehhh");
   
     /* DRAW HERE */
     Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font12, 0x00, 0xF0);     
