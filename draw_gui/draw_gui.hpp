@@ -21,6 +21,17 @@ extern "C"{
 #define BitsPerPixel_8 8
 
 
+#define ROW_1 72
+#define ROW_2 502
+#define ROW_3 944
+
+#define COL_1 382
+#define COL_2 537
+#define COL_3 775
+
+#define SIZE_X 442
+#define SIZE_Y 120
+
 extern UBYTE *Refresh_Frame_Buf;
 extern bool Four_Byte_Align;
 
