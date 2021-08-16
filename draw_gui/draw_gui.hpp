@@ -56,7 +56,7 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
 
 void InitGui();
 
-UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, int xd);
+UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, int xd, char unit[]);
 
 
 #endif // DRAW_GUI_HPP

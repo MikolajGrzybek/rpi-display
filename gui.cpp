@@ -21,38 +21,6 @@ Gui::Gui()
     connect(gps, &Gps::fixChanged, this, &Gui::on_gps_fix_changed);
 
     InitGui();
-
-    for(int test_msg = 0; test_msg <= 100000; test_msg++){
-
-        if(test_msg % 3 == 0){
-            // charge
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_1, COL_1, test_msg + 2);
-            // max volt
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_1, COL_2, test_msg + 2);
-            // t main motor
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_1, COL_3, test_msg + 2);
-        }
-        
-        if(test_msg % 3 == 1){ 
-            // discharge
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_2, COL_1, test_msg + 1);
-            // min volt
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_2, COL_2, test_msg + 1);
-            // t aux motor
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_2, COL_3, test_msg + 1);
-        }
-
-        else{
-            //throttle
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_3, COL_1, test_msg);
-        
-            // speed
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_3, COL_2, test_msg);
-            
-            // t extra
-            Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_3, COL_3, test_msg);
-        }        
-    }
 }
 
 
@@ -77,7 +45,8 @@ void Gui::on_gps_data_received(sbt_RMC_msg msg)
 								 UINT8_MAX);
     m_mav.sensor_alive(MAV_SYS_STATUS_SENSOR_GPS);
 
-    Paint_DrawNum(165, 100, speed_int, &Font24, 0x00, 0xFF); 
+    Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_3, COL_2, speed_int, "null");
+
 }
 
 void Gui::on_gps_fix_changed(bool is_fixed)
@@ -97,6 +66,8 @@ void Gui::on_can_frame_received(can_frame cf)
     sprint_canframe(frame_buff, &cf, ' ');
     QString frame_str(frame_buff);
     // tmp log
+
+    static int debug_var = 0;
 
     QStringList id_names = {
         "COOLING SYSTEM PARAMETERS",
@@ -131,36 +102,42 @@ void Gui::on_can_frame_received(can_frame cf)
     const QString id_string = id_names[can_ID - CAN_ID_OFFSET];
     const QString log_data = date + QString(" [%1]").arg(can_ID, 2) + " - " + id_string;
 
-    // to do : odczytanie parametrów
+
     switch (can_ID) {
     case can_msg_id_t::COOLING_SYSTEM_PARAMETERS_ID:
     {
         can_pump_state_input psi;
         memcpy(&psi, cf.data, sizeof(can_pump_state_input));
-        double mot1_temp = psi.motor_one_temp;
-        // double mot2_temp = psi.motor_two_temp;
-     //  print temp here ui->pb_temp_1->setFormat(QString::number(mot1_temp) + " C");
+        int mot1_temp = (int)(psi.motor_one_temp * 10);
+        int mot2_temp = (int)(psi.motor_two_temp * 10);
 
-        qDebug() << "Mot temp: " << mot1_temp;
-    //        psi.input_flow;  // unused
-    //        psi.output_flow; // unused
+        /****************** DRAW VALUES ON EPAPER **************/
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_1, COL_3, mot1_temp / 10, "deg");
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_2, COL_3, mot2_temp / 10, "deg");
         break;
     }
+
     case can_msg_id_t::PUMP_MODE_ID:
         // only to send - souldnt be received
         break;
+
     case can_msg_id_t::COOLING_SYSTEM_ERRORS_ID:
         // SBT_e_pump_alarm?
         // ui->tb_errors->append(date + " " + id_string + " -> " + alarm_e[cf.data[0]] + "!");
         break;
+
     case can_msg_id_t::MOTOR_POWER_ID:
     {
         can_motor_power mp;
         memcpy(&mp, cf.data, sizeof(can_motor_power));
         double throttle = mp.potentiometer_value1/20.f + 50;
-        // print throttle    ui->pb_poten1->setValue(throttle);
+        int int_throrrtle = (int)(throttle*100);
+
+        /****************** DRAW VALUES ON EPAPER **************/
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_3, COL_1, int_throrrtle, "perc");
         break;
     }
+
     case can_msg_id_t::HYDROFOIL_ANGLE_ID:
         can_hydrofoil_angle ha;
         memcpy(&ha, cf.data, sizeof(can_hydrofoil_angle));
@@ -203,19 +180,22 @@ void Gui::on_can_frame_received(can_frame cf)
     {
         can_bms_data bmsd;
         memcpy(&bmsd, cf.data, sizeof(can_bms_data));
+
         double min_vol = bmsd.max_cell_volatage / 10000.f;
         double max_vol = bmsd.min_cell_voltage / 10000.f;
-        double dis_cur = bmsd.discharge_cuttent / 100.f;
+        double discharge_cur = bmsd.discharge_cuttent / 100.f;
         double charge_cur = bmsd.charge_current/ 10000.f;
-	int char_power = (int)(dis_cur * (min_vol + max_vol)/2);
+        
+        int char_power = (int)(charge_cur * (min_vol + max_vol)/2);
+        int dischar_power = (int)(discharge_cur * (min_vol + max_vol)/2);
 
-	// print vols and power here
-	/* ui->lcd_max_vol->display(max_vol);
-        ui->lcd_min_vol->display(min_vol);
-        ui->lcd_max_curr->display(dis_cur);
-        ui->lcd_min_curr->display(charge_cur);
-        */ 
-	m_mav.sensor_alive(MAV_SYS_STATUS_SENSOR_BATTERY);
+        /****************** DRAW VALUES ON EPAPER **************/
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_1, COL_1, char_power, "watt");
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_2, COL_1, dischar_power, "watt");
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_1, COL_2, max_vol, "volt");
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_2, COL_2, min_vol, "volt");
+
+	    m_mav.sensor_alive(MAV_SYS_STATUS_SENSOR_BATTERY);
         m_mav.update_battery_info((bmsd.min_cell_voltage * 12) / 10, bmsd.discharge_cuttent, -1);
         uint16_t cell_volts[10] = {
             (uint16_t) (bmsd.min_cell_voltage / 10),
@@ -248,6 +228,8 @@ void Gui::on_can_frame_received(can_frame cf)
         // ...
         break;
     default:
+        Dynamic_Refresh(SIZE_X, SIZE_Y, ROW_3, COL_3, debug_var, "null");
+        debug_var++;
         // ui->tb_logs->append(QString::number(can_ID) + " - not defined");
         break;
     }

@@ -2,6 +2,7 @@
 #include "Debug.h"
 #include "EPD_IT8951.h"
 #include "GUI_Paint.h"
+#include <cstring>
 #include <sys/types.h>
 
 IT8951_Dev_Info Dev_Info;
@@ -90,8 +91,8 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     // CONSUMPTION BAR
     Paint_DrawRectangle(82, 88, 922, 272, 0x00, DOT_PIXEL_3X3, DRAW_FILL_EMPTY);
     Paint_DrawLine(292, 88, 292, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
-    Paint_DrawLine(502, 88, 292, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
-    Paint_DrawLine(712, 88, 292, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
+    Paint_DrawLine(502, 88, 502, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
+    Paint_DrawLine(712, 88, 712, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
     /* ----------------- */
 
 
@@ -199,7 +200,9 @@ void InitGui(){
     return;
 }
 
-UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, int msg){
+UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, int msg, char unit[]){
+    char chosen_unit[2] = "";
+    
     Dynamic_Refresh_Area Area;
 
     Area.Dynamic_Area_Width = width;
@@ -220,10 +223,28 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
 
     Paint_Clear(WHITE);
 
+    if(!strcmp("watt", unit)){
+        chosen_unit[0] = 'W';
+    }
+    else if(!strcmp("volt", unit)){
+        chosen_unit[0] = 'V';
+    }
+    else if(!strcmp("deg", unit)){
+        chosen_unit[0] = 'C';
+    }
+    else if(!strcmp("perc", unit)){
+        chosen_unit[0] = '%';
+    }
+    else{
+        chosen_unit[0] = ' ';
+        chosen_unit[1] = ' ';
+    }
+    
+
     /* DRAW HERE */
     Paint_DrawRectangle(30, 15, Area.Dynamic_Area_Width - 30, Area.Dynamic_Area_Height - 15, 0x00, DOT_PIXEL_3X3, DRAW_FILL_EMPTY);
     Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);
-
+    Paint_DrawString_EN(Area.Dynamic_Area_Width/2 + 15, Area.Dynamic_Area_Height/2 + 15, chosen_unit, &Font24, 0x30, 0xD0);
 
     EPD_IT8951_1bp_Refresh(Refresh_Frame_Buf, Area.Start_X, Area.Start_Y, width, height, A2_Mode, Init_Target_Memory_Addr, true);
 
