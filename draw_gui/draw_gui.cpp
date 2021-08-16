@@ -97,6 +97,13 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     Paint_DrawLine(292, 88, 292, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
     Paint_DrawLine(502, 88, 502, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
     Paint_DrawLine(712, 88, 712, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
+
+    Paint_DrawLine(100, 130, 180, 130, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
+    Paint_DrawLine(180, 88, 260, 272, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
+
+    Paint_DrawLine(322, 180, 472, 180, 0x00, DOT_PIXEL_3X3, LINE_STYLE_SOLID);
+
+
     /* ----------------- */
 
 
