@@ -1,13 +1,14 @@
 #include "draw_gui.hpp"
 #include "Debug.h"
 #include "EPD_IT8951.h"
+#include "GUI_Paint.h"
 #include <sys/types.h>
 
 IT8951_Dev_Info Dev_Info;
 
-UWORD Panel_Width = NULL;
-UWORD Panel_Height = NULL;
-UDOUBLE Init_Target_Memory_Addr = NULL;
+UWORD Panel_Width = 0;
+UWORD Panel_Height = 0;
+UDOUBLE Init_Target_Memory_Addr = 0;
 
 UBYTE *Refresh_Frame_Buf = NULL;
 bool Four_Byte_Align = true;
@@ -199,10 +200,6 @@ void InitGui(){
 }
 
 UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, int msg){
-    UWORD Panel_Width = Dev_Info.Panel_W;
-    UWORD Panel_Height = Dev_Info.Panel_H;
-    UDOUBLE Init_Target_Memory_Addr = Dev_Info.Memory_Addr_L | (Dev_Info.Memory_Addr_H << 16);
-
     Dynamic_Refresh_Area Area;
 
     Area.Dynamic_Area_Width = width;
@@ -210,17 +207,18 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Area.Start_X = start_x;
     Area.Start_Y = start_y;
     
-    Area.Imagesize = ((Area.Dynamic_Area_Width * BitsPerPixel_8 % 8 == 0)? (Area.Dynamic_Area_Width* BitsPerPixel_8 / 8 ): (Area.Dynamic_Area_Width * BitsPerPixel_8 / 8 + 1)) * Area.Dynamic_Area_Height;
+    Area.Imagesize = ((Area.Dynamic_Area_Width * 1 % 8 == 0)? (Area.Dynamic_Area_Width* 1 / 8 ): (Area.Dynamic_Area_Width * 1 / 8 + 1)) * Area.Dynamic_Area_Height;
     if((Refresh_Frame_Buf = (UBYTE *)malloc(Area.Imagesize)) == NULL) {
         Debug("Failed to apply for image memory...\r\n");
         return -1;
     } 
 
+    Paint_NewImage(Refresh_Frame_Buf, Area.Dynamic_Area_Width, Area.Dynamic_Area_Height, 0, BLACK);
     Paint_SelectImage(Refresh_Frame_Buf);
     Epd_Mode(epd_mode);
     Paint_SetBitsPerPixel(1);
+    
     Paint_Clear(WHITE);
-    Debug("eeehhh");
   
     /* DRAW HERE */
     Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font12, 0x00, 0xF0);     
