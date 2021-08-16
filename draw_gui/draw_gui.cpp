@@ -17,7 +17,7 @@ UBYTE BitsPerPixel = 8;
 
 const int epd_mode = 0;
 const UWORD VCOM = 2100;
-extern UBYTE isColor; 
+extern UBYTE isColor;
 
 FT_Face font_small;
 FT_Face font_digits;
@@ -48,7 +48,7 @@ static void Epd_Mode(int mode)
 
 
 UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target_Memory_Addr){
-    
+
     UWORD Display_Area_Height = Panel_Height;
 
     UWORD Display_Area_Width;
@@ -76,14 +76,14 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
 
     /* ---- Actually print GUI ---- */
 
-  
+
 
     /* ---- TOP BAR ---- */
     // BOAT MODE
     FT_ULong t_boat_mode[] = T_BOAT_MODE;
     paint_string(font_small, t_boat_mode, T_BOAT_MODE_L, 1020 + SMALL_FONT_W, 90 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
 
-    // BOAT STATUS 
+    // BOAT STATUS
     FT_ULong t_boat_status[] = T_BOAT_STATUS;
     paint_string(font_small, t_boat_status, T_BOAT_STATUS_L, 1020 + SMALL_FONT_W, 200 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
 
@@ -104,12 +104,12 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     FT_ULong t_discharge[] = T_DISCHARGE;
     paint_string_centered(font_small, t_discharge, T_DISCHARGE_L, 503, 944, 324 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
 
-    //THROTTLE    
+    //THROTTLE
     FT_ULong t_throttle[] = T_THROTTLE;
     paint_string_centered(font_small, t_throttle, T_THROTTLE_L, 945, 1388, 324 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
     /* ----------------- */
 
-    
+
     /* ---- SECOND ROW ---- */
     // MAX VOLT.
     FT_ULong t_max_volt[] = T_MAX_VOLT;
@@ -119,7 +119,7 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     FT_ULong t_min_volt[] = T_MIN_VOLT;
     paint_string_centered(font_small, t_min_volt, T_MIN_VOLT_L, 503, 944, 562 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
 
-    //SPEED    
+    //SPEED
     FT_ULong t_speed[] = T_SPEED;
     paint_string_centered(font_small, t_speed, T_SPEED_L, 945, 1388, 562 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
     /* ----------------- */
@@ -150,7 +150,7 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     //paint_percent_centered(font_digits, 0.62, 944, 1388, 494, 0.0);
     //preview T. EXTRA
    // paint_temperature_centered(font_digits, 65.5, 944, 1388, 970, 0.0);
-   
+
     /* ========================= */
 
 
@@ -174,7 +174,7 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     return 0;
 }
 
-void InitGui(){  
+void InitGui(){
     // Init the BCM2835 Device
     if(DEV_Module_Init()!=0){
         printf("ERROR");
@@ -206,12 +206,12 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Area.Dynamic_Area_Height = height;
     Area.Start_X = start_x;
     Area.Start_Y = start_y;
-    
+
     Area.Imagesize = ((Area.Dynamic_Area_Width * 1 % 8 == 0)? (Area.Dynamic_Area_Width* 1 / 8 ): (Area.Dynamic_Area_Width * 1 / 8 + 1)) * Area.Dynamic_Area_Height;
     if((Refresh_Frame_Buf = (UBYTE *)malloc(Area.Imagesize)) == NULL) {
         Debug("Failed to apply for image memory...\r\n");
         return -1;
-    } 
+    }
 
     Paint_NewImage(Refresh_Frame_Buf, Area.Dynamic_Area_Width, Area.Dynamic_Area_Height, 0, BLACK);
     Paint_SelectImage(Refresh_Frame_Buf);
@@ -219,14 +219,14 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Paint_SetBitsPerPixel(1);
 
     Paint_Clear(WHITE);
-  
+
     /* DRAW HERE */
-    Paint_DrawRectangle(45, 45, Area.Dynamic_Area_Width - 45, Area.Dynamic_Area_Height - 45, 0x00, DOT_PIXEL_3X3, DRAW_FILL_EMPTY);
-    Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);     
+    Paint_DrawRectangle(30, 15, Area.Dynamic_Area_Width - 30, Area.Dynamic_Area_Height - 15, 0x00, DOT_PIXEL_3X3, DRAW_FILL_EMPTY);
+    Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);
 
 
     EPD_IT8951_1bp_Refresh(Refresh_Frame_Buf, Area.Start_X, Area.Start_Y, width, height, A2_Mode, Init_Target_Memory_Addr, true);
-    
+
     if(Refresh_Frame_Buf != NULL){
         free(Refresh_Frame_Buf);
         Refresh_Frame_Buf = NULL;
