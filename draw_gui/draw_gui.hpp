@@ -26,8 +26,8 @@ extern "C"{
 #define ROW_3 944
 
 #define COL_1 382
-#define COL_2 537
-#define COL_3 775
+#define COL_2 600
+#define COL_3 850
 
 #define SIZE_X 442
 #define SIZE_Y 120
