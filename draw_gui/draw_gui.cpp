@@ -196,78 +196,41 @@ void InitGui(){
     return;
 }
 
-
-UBYTE Dynamic_Refresh_Example(IT8951_Dev_Info Dev_Info, UDOUBLE Init_Target_Memory_Addr, int n){
+UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, int msg){
     UWORD Panel_Width = Dev_Info.Panel_W;
     UWORD Panel_Height = Dev_Info.Panel_H;
+    UDOUBLE Init_Target_Memory_Addr = Dev_Info.Memory_Addr_L | (Dev_Info.Memory_Addr_H << 16);
 
-    UWORD Dynamic_Area_Width = 96;
-    UWORD Dynamic_Area_Height = 48;
+    Dynamic_Refresh_Area Area;
 
-    UDOUBLE Imagesize;
-
-    UWORD Start_X = 0,Start_Y = 0;
-
-    UWORD Dynamic_Area_Count = 0;
-
-    UWORD Repeat_Area_Times = 0;
-
-    //malloc enough memory for 1bp picture first
-    Imagesize = ((Panel_Width * 1 % 8 == 0)? (Panel_Width * 1 / 8 ): (Panel_Width * 1 / 8 + 1)) * Panel_Height;
-    if((Refresh_Frame_Buf = (UBYTE *)malloc(Imagesize)) == NULL){
-        Debug("Failed to apply for picture memory...\r\n");
-        return -1;
-    }
-
-    clock_t Dynamic_Area_Start, Dynamic_Area_Finish;
-    double Dynamic_Area_Duration;  
-
-    while(1)
-    {
-        Dynamic_Area_Width = 430;
-        Dynamic_Area_Height = 120;
-
-        Start_X = 72;
-        Start_Y = 382;
-
-        Dynamic_Area_Count = 0;
-
-        Dynamic_Area_Start = clock();
-        Debug("Start to dynamic display...\r\n");       
-
-        Imagesize = ((Dynamic_Area_Width % 8 == 0)? (Dynamic_Area_Width / 8 ): (Dynamic_Area_Width / 8 + 1)) * Dynamic_Area_Height;
-        Paint_NewImage(Refresh_Frame_Buf, Dynamic_Area_Width, Dynamic_Area_Height, 0, BLACK);
-        Paint_SelectImage(Refresh_Frame_Buf);
-        Epd_Mode(epd_mode);
-        Paint_SetBitsPerPixel(1);
-
-        Paint_Clear(WHITE);
-
-        //For color definition of all BitsPerPixel, you can refer to GUI_Paint.h
-        Paint_DrawRectangle(50, 50, 100, 100, 0x00, DOT_PIXEL_2X2, DRAW_FILL_EMPTY);
-
-        Paint_DrawNum(Dynamic_Area_Width/2, Dynamic_Area_Height/2, n, &Font20, 0x00, 0xF0);
-        //  paint_percent(font_digits, ++Dynamic_Area_Count/100, Dynamic_Area_Width/4, Dynamic_Area_Height/4, 0.0);
-
-        EPD_IT8951_1bp_Refresh(Refresh_Frame_Buf, Start_X, Start_Y, Dynamic_Area_Width,  Dynamic_Area_Height, A2_Mode, Init_Target_Memory_Addr, true);
+    Area.Dynamic_Area_Width = width;
+    Area.Dynamic_Area_Height = height;
+    Area.Start_X = start_x;
+    Area.Start_Y = start_y;
     
-           
+    Area.Imagesize = ((Area.Dynamic_Area_Width * BitsPerPixel_8 % 8 == 0)? (Area.Dynamic_Area_Width* BitsPerPixel_8 / 8 ): (Area.Dynamic_Area_Width * BitsPerPixel_8 / 8 + 1)) * Area.Dynamic_Area_Height;
+    if((Refresh_Frame_Buf = (UBYTE *)malloc(Area.Imagesize)) == NULL) {
+        Debug("Failed to apply for image memory...\r\n");
+        return -1;
+    } 
 
-        Dynamic_Area_Finish = clock();
-        Dynamic_Area_Duration = (double)(Dynamic_Area_Finish - Dynamic_Area_Start) / CLOCKS_PER_SEC;
-        Debug( "Write and Show occupy %f second\n", Dynamic_Area_Duration );
+    Paint_SelectImage(Refresh_Frame_Buf);
+    Epd_Mode(epd_mode);
+    Paint_SetBitsPerPixel(BitsPerPixel_8);
+    Paint_Clear(WHITE);
 
-        Repeat_Area_Times ++;
-        if(Repeat_Area_Times > 0){
-            break;
-        }
-    }
+  
+    /* DRAW HERE */
+    Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);     
+
+
+    EPD_IT8951_8bp_Refresh(Refresh_Frame_Buf, Area.Start_X, Area.Start_Y, width, height, false, Init_Target_Memory_Addr);
+    
     if(Refresh_Frame_Buf != NULL){
         free(Refresh_Frame_Buf);
         Refresh_Frame_Buf = NULL;
     }
 
     return 0;
+
 }
-
-

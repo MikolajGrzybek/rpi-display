@@ -22,11 +22,25 @@ Gui::Gui()
 
     InitGui();
 
-    for(int n = 0; n <= 100000; n++){
-        Dynamic_Refresh_Example(Dev_Info, Init_Target_Memory_Addr, n);
-        if (n >= 200){
-            EPD_IT8951_Clear_Refresh(Dev_Info, Init_Target_Memory_Addr, INIT_Mode);
-        }
+    for(int test_msg = 0; test_msg <= 100000; test_msg++){
+        // charge
+        Dynamic_Refresh(442, 120, 72, 382, test_msg);
+        // discharge
+        Dynamic_Refresh(442, 120, 502, 382, test_msg);
+        //throttle
+        Dynamic_Refresh(442, 120, 944, 382, test_msg);
+        // max volt
+        Dynamic_Refresh(442, 120, 72, 537, test_msg);
+        // min volt
+        Dynamic_Refresh(442, 120, 502, 537, test_msg);
+        // speed
+        Dynamic_Refresh(442, 120, 944, 537, test_msg);
+        // t main motor
+        Dynamic_Refresh(442, 120, 72, 775, test_msg);
+        // t aux motor
+        Dynamic_Refresh(442, 120, 502, 775, test_msg);
+        // t extra
+        Dynamic_Refresh(442, 120, 944, 775, test_msg);
     }
 }
 

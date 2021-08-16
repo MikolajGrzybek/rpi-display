@@ -156,13 +156,9 @@ int paint_glyph(FT_GlyphSlot gslot, UWORD xpos, UWORD ypos, double brighten){
             gray = bmp.buffer[q * bmp.pitch + p];
             if(gray == 0x00) continue; //treat completely white pixel as "transparent" - i.e. do not overwite with complete what was already painted. 
             gray -= brighten * 0xFF; 
-            printf("eh 1     %d | %d \n", i, j);
             Paint_SetPixel(i, j, 0xFF - gray);
-            printf("X\n");
         }
-        printf("D   %d\n", j);
     }
-    printf("D\n");
     return 0;
 }
 
@@ -172,19 +168,14 @@ int paint_string(FT_Face face, FT_ULong* charcodes, unsigned int chars_num, UWOR
     int err;
 
     for(uint i = 0; i < chars_num; i++){
-        printf("got u 1\n");
         err = font_glyph_to_slot(face, charcodes[i]);
         if(err){
             return -1;
         }
-        printf("got u 2\n");
         err = paint_glyph(slot, pen_pos, ypos, brighten);
         if(err){
-                    printf("got u 3\n");
-
             return -1;
         }
-        printf("got u 3\n");
         
         pen_pos += slot->advance.x >> 6; // the ">> 6" is here because of freetype's weird unit standards, i.e. it is a unit conversion
     }
