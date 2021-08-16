@@ -86,11 +86,11 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
 
     // BOAT STATUS
     FT_ULong t_boat_status[] = T_BOAT_STATUS;
-    paint_string(font_small, t_boat_status, T_BOAT_STATUS_L, 1020 + SMALL_FONT_W, 120 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
+    paint_string(font_small, t_boat_status, T_BOAT_STATUS_L, 1020 + SMALL_FONT_W, 135 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
 
     // GPS FIX STATUS
     FT_ULong t_gps_fix_status[] = T_GPS_FIX;
-    paint_string(font_small, t_boat_status, T_GPS_FIX_L, 1020 + SMALL_FONT_W, 190 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
+    paint_string(font_small, t_boat_status, T_GPS_FIX_L, 1020 + SMALL_FONT_W, 220 + SMALL_FONT_H, SMALL_FONT_BRIGHTEN);
 
     // CONSUMPTION BAR
     Paint_DrawRectangle(82, 88, 922, 272, 0x00, DOT_PIXEL_3X3, DRAW_FILL_EMPTY);
