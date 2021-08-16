@@ -1,0 +1,6 @@
+#define SMALL_FONT_W 30
+#define SMALL_FONT_H 36
+#define SMALL_FONT_BRIGHTEN 0.5
+
+#define DIGIT_FONT_W 80
+#define DIGIT_FONT_H 148
