@@ -217,11 +217,11 @@ UBYTE Dynamic_Refresh(UWORD width, UWORD height, UWORD start_x, UWORD start_y, i
     Paint_SelectImage(Refresh_Frame_Buf);
     Epd_Mode(epd_mode);
     Paint_SetBitsPerPixel(1);
-    
+
     Paint_Clear(WHITE);
   
     /* DRAW HERE */
-    Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font12, 0x00, 0xF0);     
+    Paint_DrawNum(Area.Dynamic_Area_Width/2, Area.Dynamic_Area_Height/2, msg, &Font24, 0x00, 0xF0);     
 
 
     EPD_IT8951_1bp_Refresh(Refresh_Frame_Buf, Area.Start_X, Area.Start_Y, width, height, A2_Mode, Init_Target_Memory_Addr, true);
