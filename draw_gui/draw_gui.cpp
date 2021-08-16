@@ -143,9 +143,9 @@ UBYTE Display_InitGui(UWORD Panel_Width, UWORD Panel_Height, UDOUBLE Init_Target
     //now as a pretty UI preview
 
     //preview SPEED
-    paint_float_centered(font_digits, 45.8, 1, 944, 1388, 732, 0.0);
+   // paint_float_centered(font_digits, 45.8, 1, 944, 1388, 732, 0.0);
     //preview THROTTLE
-    paint_percent_centered(font_digits, 0.62, 944, 1388, 494, 0.0);
+    //paint_percent_centered(font_digits, 0.62, 944, 1388, 494, 0.0);
     //preview T. EXTRA
    // paint_temperature_centered(font_digits, 65.5, 944, 1388, 970, 0.0);
    
